@@ -30,17 +30,13 @@ public class Client extends Application {
         regNumber.setAlignment(Pos.BOTTOM_CENTER);
         regNumber.setEditable(false);
 
-
         VirtualKeyboard VKeys = new VirtualKeyboard(regNumber);
         VKeys.setAlignment(Pos.CENTER);
-
 
         VBox mainPane = new VBox(5);
         mainPane.getChildren().addAll(info, VKeys);
         VBox.setVgrow(VKeys, Priority.ALWAYS);
         VBox.setVgrow(info, Priority.ALWAYS);
-
-        
 
         var scene = new Scene(mainPane, 1024, 640);
         stage.setScene(scene);
@@ -50,6 +46,10 @@ public class Client extends Application {
         stage.setMaxHeight(1080);
         stage.setTitle("Πρόγραμμα υποδοχής οχημάτων");
         stage.show();
+
+        /*functionality*/
+        VKeys.addEnterAction(new ServicesDialog(stage));
+        /***************/
     }
 
     public static void main(String[] args) {
