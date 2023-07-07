@@ -39,6 +39,7 @@ public class Client extends Application {
         mainPane.getChildren().addAll(info, VKeys);
         VBox.setVgrow(VKeys, Priority.ALWAYS);
         VBox.setVgrow(info, Priority.ALWAYS);
+
         
 
         var scene = new Scene(mainPane, 1024, 640);
@@ -47,6 +48,7 @@ public class Client extends Application {
         stage.setMinHeight(640);
         stage.setMaxWidth(1920);
         stage.setMaxHeight(1080);
+        stage.setTitle("Πρόγραμμα υποδοχής οχημάτων");
         stage.show();
     }
 

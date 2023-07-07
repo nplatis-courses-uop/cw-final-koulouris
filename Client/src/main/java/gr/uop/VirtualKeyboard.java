@@ -1,12 +1,8 @@
 package gr.uop;
 
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.Map.Entry;
-
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
@@ -37,6 +33,11 @@ public class VirtualKeyboard extends GridPane{
         super.setVgap(5);
         addKeysToPane();
         addActions();
+        enter.setDisable(true);
+    }
+
+    public void addEnterAction(EventHandler<ActionEvent> e){
+        enter.setOnAction(e);
     }
 
     private void addActions() {
@@ -61,6 +62,14 @@ public class VirtualKeyboard extends GridPane{
         });
         space.setOnAction((e)->{
             userInput.appendText(space.getText());
+        });
+
+        userInput.textProperty().addListener((obs, oldV, newV)->{
+            if(newV.length() >= 2 && newV.isEmpty() == false){
+                enter.setDisable(false);
+            }else{
+                enter.setDisable(true);
+            }
         });
     }
 
