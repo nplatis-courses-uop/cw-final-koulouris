@@ -5,12 +5,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.ArrayList;
 import java.util.Iterator;
 import javafx.scene.control.Separator;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.scene.control.Alert.AlertType;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Dialog;
@@ -19,16 +20,20 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
-public class ServicesDialog extends Dialog<Service[]>  implements EventHandler<ActionEvent>{
+public class ServicesDialog extends Dialog<String>{
     private Map<Service, CheckBox[]> list;
     private String[] names = {"Πλύσιμο εξωτερικό", "Πλύσιμο εσωτερικό", "Πλύσιμο εξωτ.+εσωτ.", "Πλύσιμο εξωτ. σπέσιαλ", "Πλύσιμο εσωτ. σπέσιαλ",
     "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ", "Βιολογικός καθαρισμός εσωτ.", "Κέρωμα-Γυάλισμα", "Καθαρισμός κινητήρα", "Πλύσιμο σασί"
     };
     private int totalCost = 0;
     private Label totCost = new Label("Συνολικό ποσό: "+totalCost);
+    private String vehicleType;
+    private ArrayList<Service> selectedServices;
 
     public ServicesDialog(Stage stage){
+        selectedServices = new ArrayList<>();
         list = new TreeMap<>();
         
         for(int i = 0; i < names.length; i++){
@@ -51,31 +56,32 @@ public class ServicesDialog extends Dialog<Service[]>  implements EventHandler<A
         servicesPane.add(new Label("Αυτοκίνητο"), 1, 0);
         servicesPane.add(new Label("Τζίπ"), 2, 0);
         servicesPane.add(new Label("Μοτοσυκλέτα"), 3, 0);
-        for(int i=1; i < names.length; i++){
+        for(int i=0; i < names.length; i++){
             if(it.hasNext()){
                 e = it.next();
             }else{break;}
-            servicesPane.add(new Label(e.getKey().getName()), 0, i);
+            servicesPane.add(new Label(e.getKey().getName()), 0, i+1);
             int k = 1;
             CheckBox[] table = e.getValue();
             for(int j = 0; j < table.length; j++){
                 table[j] = new CheckBox();
-                servicesPane.add(table[j], k, i);
+                servicesPane.add(table[j], k, i+1);
                 k+=1;
                 GridPane.setHalignment(table[j], HPos.CENTER);
-            }
+            }e.setValue(table);
             if(table.length == 2){
                 Label l = new Label("-");
-                servicesPane.add(l, 3, i);
+                servicesPane.add(l, 3, i+1);
                 GridPane.setHalignment(l, HPos.CENTER);
             }
         }
+        setCheckBoxesActions();
         
         VBox status = new VBox();
         status.getChildren().add(new Separator());
         status.getChildren().add(totCost);
         status.setPadding(new Insets(5, 0, 0, 0));
-        status.setStyle("-fx-font-size: 20px;");
+        status.setStyle("-fx-font-size: 15px;");
 
         BorderPane mainPane = new BorderPane();
         mainPane.setCenter(servicesPane);
@@ -85,6 +91,111 @@ public class ServicesDialog extends Dialog<Service[]>  implements EventHandler<A
         getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         initOwner(stage);
         setTitle("Επιλογή υπηρεσιών");
+
+        setResultConverter((button)->{
+            if(button == ButtonType.OK){
+                Alert confirm = new Alert(AlertType.CONFIRMATION);
+                confirm.setHeaderText("Επιβεβαίωση επιλογών");
+                confirm.setContentText("Έχεις επιλέξει συνολικά "+selectedServices.size()+" υπηρεσίες με συνολικό κόστος "+totalCost);
+                confirm.initOwner(stage);
+                confirm.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
+                confirm.initStyle(StageStyle.DECORATED);
+                Optional<ButtonType> res = confirm.showAndWait();
+                if(res.get() == ButtonType.OK){
+                    return "SEND";
+                }//else do nothing
+            }
+            return "CANCELED";
+        });
+    }
+
+    private void setCheckBoxesActions() {
+        Set<Map.Entry<Service,CheckBox[]>> entries = list.entrySet();
+        for(Map.Entry<Service,CheckBox[]> e: entries){
+            CheckBox[] table = e.getValue();
+            for(int i = 0;i < table.length; i++){
+                final int index = i;
+                table[i].setOnAction((c)->{
+                    Set<Map.Entry<Service,CheckBox[]>> actionEntries = list.entrySet();
+                    switch(e.getKey().getName()){//disable checkboxes in the same column
+                        case "Πλύσιμο εξωτερικό"://disable: Πλύσιμο εξωτ.+εσωτ., Πλύσιμο εξωτ. σπέσιαλ, Πλύσιμο εξωτ.+εσωτ. σπέσιαλ
+                            for(Map.Entry<Service,CheckBox[]> l: actionEntries){
+                                switch(l.getKey().getName()){
+                                    case "Πλύσιμο εξωτ.+εσωτ.":
+                                    case "Πλύσιμο εξωτ. σπέσιαλ":
+                                    case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
+                                        disableCheckBoxes(l.getValue(), index, table[index].isSelected());
+                                        break;
+                                }
+                            }
+                            break;
+                        case "Πλύσιμο εσωτερικό"://disable: Πλύσιμο εξωτ.+εσωτ, Πλύσιμο εσωτ. σπέσιαλ, Πλύσιμο εξωτ.+εσωτ. σπέσιαλ
+                            for(Map.Entry<Service,CheckBox[]> l: actionEntries){
+                                switch(l.getKey().getName()){
+                                    case "Πλύσιμο εξωτ.+εσωτ.":
+                                    case "Πλύσιμο εσωτ. σπέσιαλ":
+                                    case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
+                                        disableCheckBoxes(l.getValue(), index, table[index].isSelected());
+                                        break;
+                                }
+                            }
+                            break;
+                        case "Πλύσιμο εξωτ.+εσωτ."://disable: Πλύσιμο εξωτερικό, Πλύσιμο εσωτερικό, Πλύσιμο εξωτ. σπέσιαλ, Πλύσιμο εσωτ. σπέσιαλ, Πλύσιμο εξωτ.+εσωτ. σπέσιαλ
+
+                            break;
+                        case "Πλύσιμο εξωτ. σπέσιαλ"://disable: Πλύσιμο εξωτερικό, Πλύσιμο εξωτ.+εσωτ., Πλύσιμο εξωτ.+εσωτ. σπέσιαλ
+
+                            break;
+                        case "Πλύσιμο εσωτ. σπέσιαλ"://disable: Πλύσιμο εξωτ.+εσωτ., Πλύσιμο εσωτερικό, Πλύσιμο εξωτ.+εσωτ. σπέσιαλ
+
+                            break;
+                        case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ"://disable: Πλύσιμο εξωτερικό, Πλύσιμο εσωτερικό, Πλύσιμο εξωτ. σπέσιαλ, Πλύσιμο εσωτ. σπέσιαλ, Πλύσιμο εξωτ.+εσωτ.
+
+                            break;
+                    }
+                    for(Map.Entry<Service,CheckBox[]> l: actionEntries){//disable checkboxes from collumns != index
+                        CheckBox tb[] = l.getValue();
+                        int k = 0;
+                        for(CheckBox ch: tb){
+                            if(k!=index){ ch.setDisable(table[index].isSelected() );}
+                            k+=1;
+                        }
+                    }
+                    int cost = 0;
+                    switch(index){
+                        case 0:
+                            vehicleType = "Αυτοκίνητο";
+                            cost = e.getKey().getCarCost();
+                            break;
+                        case 1:
+                            vehicleType = "Τζίπ";
+                            cost = e.getKey().getJeepCost();
+                            break;
+                        case 2:
+                            vehicleType = "Μοτοσυκλέτα";
+                            cost = e.getKey().getMotorcycleCost();
+                            break;
+                    }
+                    //add to total cost or subtract, if the checkbox is selected then clicked again
+                    //add service to list of selected services
+                    if(table[index].isSelected()){
+                        totalCost += cost;
+                        totCost.setText("Συνολικό ποσό: "+totalCost);
+                        selectedServices.add(e.getKey());
+                    }else{
+                        totalCost -= cost;
+                        totCost.setText("Συνολικό ποσό: "+totalCost);
+                        selectedServices.remove(e.getKey());
+                    }
+                });
+            }
+        }
+    }
+
+    private void disableCheckBoxes(CheckBox[] value, int index, boolean b) {
+        if(index < value.length){
+            value[index].setDisable(b);
+        }
     }
 
     private void setServicesCosts() {
@@ -109,7 +220,7 @@ public class ServicesDialog extends Dialog<Service[]>  implements EventHandler<A
                     e.getKey().setCost(8, 9);
                     e.setValue(new CheckBox[2]);
                     break;
-                 case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
+                case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
                     e.getKey().setCost(15, 17);
                     e.setValue(new CheckBox[2]);
                     break;
@@ -131,10 +242,8 @@ public class ServicesDialog extends Dialog<Service[]>  implements EventHandler<A
         }
     }
 
-    @Override
-    public void handle(ActionEvent event) {
-        Optional<Service[]> res = showAndWait();
-
+    public String getVehicleType() {
+        return vehicleType;
     }
     
 }

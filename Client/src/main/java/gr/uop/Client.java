@@ -1,5 +1,7 @@
 package gr.uop;
 
+import java.util.ArrayList;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,6 +17,10 @@ import javafx.stage.Stage;
  * JavaFX App
  */
 public class Client extends Application {
+
+    public  ArrayList<Service> selectedServices;
+    public  int totalCost;
+    public  String vehicleType;
 
     @Override
     public void start(Stage stage) {
@@ -48,7 +54,13 @@ public class Client extends Application {
         stage.show();
 
         /*functionality*/
-        VKeys.addEnterAction(new ServicesDialog(stage));
+        ServicesDialog options = new ServicesDialog(stage);
+        VKeys.addEnterAction((e)->{
+            var res = options.showAndWait();
+            
+            System.out.println(options.getVehicleType());
+        });
+
         /***************/
     }
 
