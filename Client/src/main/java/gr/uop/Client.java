@@ -1,13 +1,22 @@
 package gr.uop;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.Scanner;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -17,10 +26,6 @@ import javafx.stage.Stage;
  * JavaFX App
  */
 public class Client extends Application {
-
-    public  ArrayList<Service> selectedServices;
-    public  int totalCost;
-    public  String vehicleType;
 
     @Override
     public void start(Stage stage) {
@@ -56,9 +61,29 @@ public class Client extends Application {
         /*functionality*/
         ServicesDialog options = new ServicesDialog(stage);
         VKeys.addEnterAction((e)->{
-            var res = options.showAndWait();
-            
-            System.out.println(options.getVehicleType());
+            Optional<String> res = options.showAndWait();
+            if(res.get().equalsIgnoreCase("SEND")){
+                ClientInfo toSend = new ClientInfo(options.getVehicleType(), regNumber.getText(), options.getSelectedServices());
+
+                try (Socket clientSocket = new Socket("localhost", 7777);
+                    ObjectOutputStream toServer = new ObjectOutputStream(clientSocket.getOutputStream());
+                    ) {
+                        toServer.writeObject(toSend);
+
+                }
+                catch (UnknownHostException k) {
+                    System.out.println("Unknown host");
+                }
+                catch (IOException k) {
+                    System.out.println(k);
+                }
+
+            }else{
+                Alert cancel = new Alert(AlertType.ERROR);
+                cancel.setHeaderText("Ακυρώθηκε απο τον χρήστη.");
+                cancel.initOwner(stage);
+                cancel.show();
+            }
         });
 
         /***************/
