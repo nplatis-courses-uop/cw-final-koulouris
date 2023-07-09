@@ -141,17 +141,57 @@ public class ServicesDialog extends Dialog<String>{
                             }
                             break;
                         case "Πλύσιμο εξωτ.+εσωτ."://disable: Πλύσιμο εξωτερικό, Πλύσιμο εσωτερικό, Πλύσιμο εξωτ. σπέσιαλ, Πλύσιμο εσωτ. σπέσιαλ, Πλύσιμο εξωτ.+εσωτ. σπέσιαλ
-
+                             for(Map.Entry<Service,CheckBox[]> l: actionEntries){
+                                switch(l.getKey().getName()){
+                                    case "Πλύσιμο εξωτερικό":
+                                    case "Πλύσιμο εσωτερικό":
+                                    case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
+                                    case "Πλύσιμο εξωτ. σπέσιαλ":
+                                    case "Πλύσιμο εσωτ. σπέσιαλ":
+                                        disableCheckBoxes(l.getValue(), index, table[index].isSelected());
+                                        break;
+                                }
                             break;
+                             }
                         case "Πλύσιμο εξωτ. σπέσιαλ"://disable: Πλύσιμο εξωτερικό, Πλύσιμο εξωτ.+εσωτ., Πλύσιμο εξωτ.+εσωτ. σπέσιαλ
-
+                                for(Map.Entry<Service,CheckBox[]> l: actionEntries){
+                                switch(l.getKey().getName()){
+                                    case "Πλύσιμο εξωτερικό":
+                                    case "Πλύσιμο εξωτ.+εσωτ":
+                                    case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
+                                        disableCheckBoxes(l.getValue(), index, table[index].isSelected());
+                                        break;
+                                }
                             break;
+                                }
                         case "Πλύσιμο εσωτ. σπέσιαλ"://disable: Πλύσιμο εξωτ.+εσωτ., Πλύσιμο εσωτερικό, Πλύσιμο εξωτ.+εσωτ. σπέσιαλ
-
+                                for(Map.Entry<Service,CheckBox[]> l: actionEntries){
+                                switch(l.getKey().getName()){
+                                    case "Πλύσιμο εξωτ.+εσωτ.":
+                                    case "Πλύσιμο εσωτερικό":
+                                    case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
+                                        disableCheckBoxes(l.getValue(), index, table[index].isSelected());
+                                        break;
+                                }
                             break;
+                            }
+                            break;
+                        
                         case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ"://disable: Πλύσιμο εξωτερικό, Πλύσιμο εσωτερικό, Πλύσιμο εξωτ. σπέσιαλ, Πλύσιμο εσωτ. σπέσιαλ, Πλύσιμο εξωτ.+εσωτ.
-
+                                for(Map.Entry<Service,CheckBox[]> l: actionEntries){
+                                switch(l.getKey().getName()){
+                                    case "Πλύσιμο εξωτερικό":
+                                    case "Πλύσιμο εσωτερικό":
+                                    case "Πλύσιμο εξωτ.+εσωτ.":
+                                    case "Πλύσιμο εσωτ. σπέσιαλ":
+                                    case "Πλύσιμο εξωτ. σπέσιαλ":
+                                        disableCheckBoxes(l.getValue(), index, table[index].isSelected());
+                                        break;
+                                }
                             break;
+                                }
+                            break;
+                             
                     }
                     for(Map.Entry<Service,CheckBox[]> l: actionEntries){//disable checkboxes from collumns != index
                         CheckBox tb[] = l.getValue();
@@ -180,11 +220,11 @@ public class ServicesDialog extends Dialog<String>{
                     //add service to list of selected services
                     if(table[index].isSelected()){
                         totalCost += cost;
-                        totCost.setText("Συνολικό ποσό: "+totalCost);
+                        totCost.setText("Συνολικό ποσό: "+totalCost+" $");
                         selectedServices.add(e.getKey());
                     }else{
                         totalCost -= cost;
-                        totCost.setText("Συνολικό ποσό: "+totalCost);
+                        totCost.setText("Συνολικό ποσό: "+totalCost+" $");
                         selectedServices.remove(e.getKey());
                     }
                 });
