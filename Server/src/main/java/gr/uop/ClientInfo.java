@@ -42,7 +42,6 @@ public class ClientInfo implements Serializable{
         return serviceAndCost.get(s);
     }
 
-
     private int getCost(Service s, String vehicleType) {
         switch (vehicleType) {
             case "Αυτοκίνητο":
