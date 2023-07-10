@@ -1,6 +1,8 @@
 package gr.uop;
 
-public class Service implements Comparable<Service>{
+import java.io.Serializable;
+
+public class Service implements Comparable<Service>, Serializable{
     private String name;
     private int code;
     private Cost c;
@@ -38,7 +40,7 @@ public class Service implements Comparable<Service>{
         return c.bkCost;
     }
 
-    private class Cost{
+    private class Cost implements Serializable{
         private int carCost, jpCost, bkCost;
 
         public Cost() {
@@ -67,7 +69,6 @@ public class Service implements Comparable<Service>{
 
     @Override
     public int compareTo(Service o) {
-        // TODO Auto-generated method stub
         return this.code - o.code;
     }
 }

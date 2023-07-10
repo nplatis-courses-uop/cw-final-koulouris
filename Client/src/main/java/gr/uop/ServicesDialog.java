@@ -151,8 +151,8 @@ public class ServicesDialog extends Dialog<String>{
                                         disableCheckBoxes(l.getValue(), index, table[index].isSelected());
                                         break;
                                 }
+                            }
                             break;
-                             }
                         case "Πλύσιμο εξωτ. σπέσιαλ"://disable: Πλύσιμο εξωτερικό, Πλύσιμο εξωτ.+εσωτ., Πλύσιμο εξωτ.+εσωτ. σπέσιαλ
                                 for(Map.Entry<Service,CheckBox[]> l: actionEntries){
                                 switch(l.getKey().getName()){
@@ -162,8 +162,8 @@ public class ServicesDialog extends Dialog<String>{
                                         disableCheckBoxes(l.getValue(), index, table[index].isSelected());
                                         break;
                                 }
+                            }
                             break;
-                                }
                         case "Πλύσιμο εσωτ. σπέσιαλ"://disable: Πλύσιμο εξωτ.+εσωτ., Πλύσιμο εσωτερικό, Πλύσιμο εξωτ.+εσωτ. σπέσιαλ
                                 for(Map.Entry<Service,CheckBox[]> l: actionEntries){
                                 switch(l.getKey().getName()){
@@ -173,7 +173,6 @@ public class ServicesDialog extends Dialog<String>{
                                         disableCheckBoxes(l.getValue(), index, table[index].isSelected());
                                         break;
                                 }
-                            break;
                             }
                             break;
                         
@@ -188,10 +187,8 @@ public class ServicesDialog extends Dialog<String>{
                                         disableCheckBoxes(l.getValue(), index, table[index].isSelected());
                                         break;
                                 }
-                            break;
-                                }
-                            break;
-                             
+                            }
+                            break;                             
                     }
                     for(Map.Entry<Service,CheckBox[]> l: actionEntries){//disable checkboxes from collumns != index
                         CheckBox tb[] = l.getValue();
@@ -284,6 +281,9 @@ public class ServicesDialog extends Dialog<String>{
 
     public String getVehicleType() {
         return vehicleType;
+    }
+    public ArrayList<Service> getSelectedServices(){
+        return selectedServices;
     }
     
 }

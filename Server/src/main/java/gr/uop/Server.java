@@ -7,10 +7,17 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import java.time.format.DateTimeFormatter;
+<<<<<<< HEAD
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+=======
+import java.util.Scanner;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.PrintWriter;
+>>>>>>> 3f9a452b4af81e763c433ceb8ec07e8632cefa3c
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;    
@@ -26,6 +33,7 @@ public class Server extends Application {
          try (ServerSocket serverSocket = new ServerSocket(7777);
              Socket connectionSocket = serverSocket.accept();
              ObjectInputStream fromClient = new ObjectInputStream(connectionSocket.getInputStream());
+<<<<<<< HEAD
             ) 
             {
             ClientInfo clientInformation = (ClientInfo)fromClient.readObject();
@@ -68,13 +76,33 @@ public class Server extends Application {
                 }while(true);
                 details.getChildren().add(clientInformation);
                
+=======
+             ) {
+                ClientInfo clientInfo = (ClientInfo)fromClient.readObject();
+
+                System.out.println(clientInfo.getVehicleType());
+                System.out.println(clientInfo.getregNumber());
+                System.out.println(clientInfo.getTotalCost());
+>>>>>>> 3f9a452b4af81e763c433ceb8ec07e8632cefa3c
                 
         }
         catch (IOException e) {
             System.out.println(e);
         }
 
+<<<<<<< HEAD
        
+=======
+        var label = new Label("Hello, JavaFX Server");
+        var scene = new Scene(new StackPane(label), 1024, 640);
+        stage.setMinWidth(1024);
+        stage.setMinHeight(640);
+        stage.setMaxWidth(1920);
+        stage.setMaxHeight(1080);
+        stage.setTitle("Πρόγραμμα ταμείου");
+        stage.setScene(scene);
+        stage.show();
+>>>>>>> 3f9a452b4af81e763c433ceb8ec07e8632cefa3c
     }
     /*public DateTimeFormatter getTimeAndDate(){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  

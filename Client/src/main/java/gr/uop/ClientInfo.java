@@ -53,8 +53,4 @@ public class ClientInfo implements Serializable{
                 return s.getMotorcycleCost();
         }
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 3f9a452b4af81e763c433ceb8ec07e8632cefa3c
