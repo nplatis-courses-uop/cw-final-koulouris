@@ -10,6 +10,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.Pane;
 public class VehicleOrder {
+    private Optional<String> proc;
+public void setProc(Optional<String> result){
+    proc=result;
+}
+public Optional<String> getProc(){
+    return proc;
+}
 
     public StackPane order(ClientInfo x){
         StackPane p = new StackPane();  
@@ -25,7 +32,7 @@ public class VehicleOrder {
             dialog.setHeaderText(null);
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
-                System.out.println(result.get());
+                setProc(result);
             }
             else {
                 System.out.println("Alert closed in some other way");
