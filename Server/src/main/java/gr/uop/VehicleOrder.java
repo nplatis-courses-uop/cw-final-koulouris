@@ -14,11 +14,11 @@ public class VehicleOrder {
 public void setProc(Optional<String> result){
     proc=result;
 }
-public Optional<String> getProc(){
-    return proc;
+public String/*Optional<String>*/ getProc(){
+    return proc.toString();
 }
 
-    public StackPane order(ClientInfo x){
+    public StackPane order(ClientInfo x){//javafx create and input it in main
         StackPane p = new StackPane();  
         VBox serv = new VBox();
         TextArea services = new TextArea(toString(x));

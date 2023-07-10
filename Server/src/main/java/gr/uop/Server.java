@@ -1,26 +1,21 @@
 package gr.uop;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.TreeMap;
+
+import javax.swing.WindowConstants;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-import java.time.format.DateTimeFormatter;
-<<<<<<< HEAD
-import java.util.LinkedList;
-import java.util.Scanner;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-=======
-import java.util.Scanner;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.PrintWriter;
->>>>>>> 3f9a452b4af81e763c433ceb8ec07e8632cefa3c
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.time.LocalDateTime;    
+import javafx.stage.Stage;   
 
 /**
  * JavaFX App
@@ -33,7 +28,6 @@ public class Server extends Application {
          try (ServerSocket serverSocket = new ServerSocket(7777);
              Socket connectionSocket = serverSocket.accept();
              ObjectInputStream fromClient = new ObjectInputStream(connectionSocket.getInputStream());
-<<<<<<< HEAD
             ) 
             {
             ClientInfo clientInformation = (ClientInfo)fromClient.readObject();
@@ -43,30 +37,32 @@ public class Server extends Application {
                 System.out.println(clientInformation.getregNumber());
                 System.out.println(clientInformation.getTotalCost());
                 MoneyBook bookOfServices = new MoneyBook();
-                bookOfServices.inputServiceInfo(clientInformation, now);
-
-                
-                
-                //var label = new Label("Receit for Car");
+                bookOfServices.inputServiceInfo(clientInformation, now); 
                 StackPane details = new StackPane();
                 LinkedList<ClientInfo> q = new LinkedList();
-                
-                var scene = new Scene(details, 1024, 640);
-                stage.setMinWidth(1024);
-                stage.setMinHeight(640);
-                stage.setMaxWidth(1920);
-                stage.setMaxHeight(1080);
-                stage.setTitle("Πρόγραμμα ταμείου");
-                stage.setScene(scene);
-                stage.show();
+                TreeMap<ClientInfo,String> ordering = new TreeMap();
                 do{//programm runnning
+                    /*
+                        var label = new Label("Hello, JavaFX Server");
+                        var scene = new Scene(new StackPane(label), 1024, 640);
+                        stage.setMinWidth(1024);
+                        stage.setMinHeight(640);
+                        stage.setMaxWidth(1920);
+                        stage.setMaxHeight(1080);
+                        stage.setTitle("Πρόγραμμα ταμείου");
+                        stage.setScene(scene);
+                        stage.show();
+                     */
                     q.add(clientInformation);
                     VehicleOrder client = new VehicleOrder();
+                    ordering.add(clientInformation,client.getProc());
+                    q.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
                     details.getChildren().add(client);
-                    if(client.getCorrectButtonValue() == 1){//if radio button true for payment
+                    String ch=(String)client.getProc();
+                    if(ch.contains("Pay")){//if radio button true for payment
                         client.addClientToBook(q, clientInformation, now);
                     }
-                    else if(client.rbCancel == 2){
+                    else if(ch.contains("Cancel")){
                         client.remClient(q, clientInformation);
                     }
                     if(q.isEmpty()){//end window
@@ -76,33 +72,21 @@ public class Server extends Application {
                 }while(true);
                 details.getChildren().add(clientInformation);
                
-=======
-             ) {
+              
                 ClientInfo clientInfo = (ClientInfo)fromClient.readObject();
 
                 System.out.println(clientInfo.getVehicleType());
                 System.out.println(clientInfo.getregNumber());
                 System.out.println(clientInfo.getTotalCost());
->>>>>>> 3f9a452b4af81e763c433ceb8ec07e8632cefa3c
+              }
+
                 
-        }
+        
         catch (IOException e) {
             System.out.println(e);
         }
-
-<<<<<<< HEAD
        
-=======
-        var label = new Label("Hello, JavaFX Server");
-        var scene = new Scene(new StackPane(label), 1024, 640);
-        stage.setMinWidth(1024);
-        stage.setMinHeight(640);
-        stage.setMaxWidth(1920);
-        stage.setMaxHeight(1080);
-        stage.setTitle("Πρόγραμμα ταμείου");
-        stage.setScene(scene);
-        stage.show();
->>>>>>> 3f9a452b4af81e763c433ceb8ec07e8632cefa3c
+
     }
     /*public DateTimeFormatter getTimeAndDate(){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
@@ -115,5 +99,6 @@ public class Server extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
 
 }
