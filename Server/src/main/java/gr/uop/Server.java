@@ -39,11 +39,10 @@ public class Server extends Application {
                 MoneyBook bookOfServices = new MoneyBook();
                 bookOfServices.inputServiceInfo(clientInformation, now); 
                 StackPane details = new StackPane();
-                LinkedList<ClientInfo> q = new LinkedList();
-                TreeMap<ClientInfo,String> ordering = new TreeMap();
-                do{//programm runnning
-                    /*
-                        var label = new Label("Hello, JavaFX Server");
+                LinkedList<ClientInfo> q = new LinkedList();//πληροφοριες για το καθε οχημα
+                TreeMap<ClientInfo,String> ordering = new TreeMap();//ClientInfo για το κλειδι και το String για το alert απο την κλαση VecicleOrder
+                //test here
+                        var label = new Label("No Services Right Now");
                         var scene = new Scene(new StackPane(label), 1024, 640);
                         stage.setMinWidth(1024);
                         stage.setMinHeight(640);
@@ -52,12 +51,13 @@ public class Server extends Application {
                         stage.setTitle("Πρόγραμμα ταμείου");
                         stage.setScene(scene);
                         stage.show();
-                     */
+                do{//programm runnning
+                    
                     q.add(clientInformation);
                     VehicleOrder client = new VehicleOrder();
-                    ordering.add(clientInformation,client.getProc());
-                    q.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-                    details.getChildren().add(client);
+                    ordering.add(clientInformation,client.getProc());               //εδω 
+                    q.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);//δεν βλεπει το χρόνο?
+                    details.getChildren().add(client);                              //εδω
                     String ch=(String)client.getProc();
                     if(ch.contains("Pay")){//if radio button true for payment
                         client.addClientToBook(q, clientInformation, now);

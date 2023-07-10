@@ -9,6 +9,12 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.Pane;
+/*
+ * it should be dislacing it like :
+ * 
+ * button VBox[TextArea(clientInfo)]
+ * 
+ */
 public class VehicleOrder {
     private Optional<String> proc;
 public void setProc(Optional<String> result){
@@ -23,8 +29,8 @@ public String/*Optional<String>*/ getProc(){
         VBox serv = new VBox();
         TextArea services = new TextArea(toString(x));
         services.setEditable(false);
-        
         Button butt = new Button("Status");
+        butt.setMargin(10,10,10,50); //here για να μπει ενα κενο αναμεσα στο κουμπι και στο VBox
         butt.setOnAction((e) -> {
             ChoiceDialog<String> dialog = new ChoiceDialog<>("Prossesing", "Pay", "Prossesing", "Cancel");
             dialog.setContentText("Select one:");
@@ -43,7 +49,7 @@ public String/*Optional<String>*/ getProc(){
         p.getChildren().add(serv);
         return p;
     }
-    public String toString(ClientInfo ci){
+    public String toString(ClientInfo ci){//fix toString
         return /*""+ci.getServiceCost(null).getCarCost()+"$ "+*/ci.getSelectedServices()+" "+ci.getregNumber()+" "+ci.getVehicleType();
     }
     public LinkedList<ClientInfo> remClient(LinkedList<ClientInfo> x,ClientInfo y){
