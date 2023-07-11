@@ -82,6 +82,8 @@ public class Client extends Application {
                     }else{
                         try{
                             toServer.writeObject(toSend);
+                            options.clear();
+                            regNumber.clear();
                         }catch(IOException io){
                             System.out.println("87 "+io.getMessage());
                         }

@@ -285,5 +285,19 @@ public class ServicesDialog extends Dialog<String>{
     public ArrayList<Service> getSelectedServices(){
         return selectedServices;
     }
+
+    /**
+     * Clear all previously selected options
+     */
+    public void clear() {
+        Set<Map.Entry<Service, CheckBox[]>> entries = list.entrySet();
+        for(Map.Entry<Service, CheckBox[]> entry: entries){
+            CheckBox[] ch = entry.getValue();
+            for(CheckBox c: ch){
+                c.selectedProperty().set(false);
+                c.setDisable(false);
+            }
+        }
+    }
     
 }
