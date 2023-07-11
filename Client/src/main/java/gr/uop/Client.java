@@ -3,7 +3,10 @@ package gr.uop;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.net.ConnectException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -59,20 +62,27 @@ public class Client extends Application {
         stage.show();
 
         /*functionality*/
+       
         ServicesDialog options = new ServicesDialog(stage);
+        System.out.println("66");
         VKeys.addEnterAction((e)->{
             Optional<String> res = options.showAndWait();
             if(res.get().equalsIgnoreCase("SEND")){
-                ClientInfo toSend = new ClientInfo(options.getVehicleType(), regNumber.getText(), options.getSelectedServices());
-
                 try (Socket clientSocket = new Socket("localhost", 7777);
-                    ObjectOutputStream toServer = new ObjectOutputStream(clientSocket.getOutputStream());
-                    ) {
+                 ObjectOutputStream toServer = new ObjectOutputStream(clientSocket.getOutputStream());
+                 ) {
+                    ClientInfo toSend = new ClientInfo(options.getVehicleType(), regNumber.getText(), options.getSelectedServices());
+                    System.out.println("71");
+                    if(clientSocket.isClosed()){
+                        System.out.println("socket is closed");
+                    }
                         toServer.writeObject(toSend);
-
                 }
                 catch (UnknownHostException k) {
                     System.out.println("Unknown host");
+                }
+                catch (ConnectException n) {
+                    System.err.println("Connection refused: " + n.getMessage());
                 }
                 catch (IOException k) {
                     System.out.println(k);
@@ -85,6 +95,8 @@ public class Client extends Application {
                 cancel.show();
             }
         });
+
+       
 
         /***************/
     }
