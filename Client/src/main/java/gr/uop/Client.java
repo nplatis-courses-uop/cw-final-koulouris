@@ -29,6 +29,8 @@ import javafx.stage.Stage;
  * JavaFX App
  */
 public class Client extends Application {
+    private Socket clientSocket;
+    private ObjectOutputStream toServer;
 
     @Override
     public void start(Stage stage) {
@@ -62,32 +64,28 @@ public class Client extends Application {
         stage.show();
 
         /*functionality*/
-       
         ServicesDialog options = new ServicesDialog(stage);
-        System.out.println("66");
         VKeys.addEnterAction((e)->{
             Optional<String> res = options.showAndWait();
             if(res.get().equalsIgnoreCase("SEND")){
-                try (Socket clientSocket = new Socket("localhost", 7777);
-                 ObjectOutputStream toServer = new ObjectOutputStream(clientSocket.getOutputStream());
-                 ) {
                     ClientInfo toSend = new ClientInfo(options.getVehicleType(), regNumber.getText(), options.getSelectedServices());
-                    System.out.println("71");
+                    try{
+                        clientSocket = new Socket("localhost", 7777);
+                        toServer = new ObjectOutputStream(clientSocket.getOutputStream());
+
+                    }catch(IOException io){
+                        System.out.println("Error connecting to server.");
+                        System.exit(0);
+                    }
                     if(clientSocket.isClosed()){
                         System.out.println("socket is closed");
+                    }else{
+                        try{
+                            toServer.writeObject(toSend);
+                        }catch(IOException io){
+                            System.out.println("87 "+io.getMessage());
+                        }
                     }
-                        toServer.writeObject(toSend);
-                }
-                catch (UnknownHostException k) {
-                    System.out.println("Unknown host");
-                }
-                catch (ConnectException n) {
-                    System.err.println("Connection refused: " + n.getMessage());
-                }
-                catch (IOException k) {
-                    System.out.println(k);
-                }
-
             }else{
                 Alert cancel = new Alert(AlertType.ERROR);
                 cancel.setHeaderText("Ακυρώθηκε απο τον χρήστη.");
