@@ -86,38 +86,4 @@ public class Server extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
-    private class ClientHandler implements Runnable {
-        private Socket clientSocket;
-        
-        private ClientHandler(Socket clientSocket) {
-            this.clientSocket = clientSocket;
-        }
-        
-        @Override
-        public void run() {
-            try {
-                // Get input from the client socket
-                ObjectInputStream inputStream = new ObjectInputStream(clientSocket.getInputStream());
-                do{
-                    ClientInfo clientInformation = (ClientInfo)inputStream.readObject();
-                    LocalDateTime now = LocalDateTime.now();  
-
-                    Platform.runLater(()->{
-                        details.add(clientInformation, now);
-                    });
-                }while(inputStream.available() != 0);
-                
-                // Close the client socket
-                clientSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            return;
-        }
-    }
-
 }
