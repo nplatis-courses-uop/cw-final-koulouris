@@ -42,7 +42,6 @@ public class ClientInfo implements Serializable{
         return serviceAndCost.get(s);
     }
 
-
     private int getCost(Service s, String vehicleType) {
         switch (vehicleType) {
             case "Αυτοκίνητο":
@@ -52,5 +51,12 @@ public class ClientInfo implements Serializable{
             default:
                 return s.getMotorcycleCost();
         }
+    }
+
+    public void deletClientInfo(ClientInfo info){
+        totalCost = 0;
+        serviceAndCost.clear();
+        vehicleType = "";
+        regNumber = "";
     }
 }
