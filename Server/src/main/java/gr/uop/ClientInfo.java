@@ -53,4 +53,10 @@ public class ClientInfo implements Serializable{
         }
     }
 
+    public void deletClientInfo(ClientInfo info){
+        totalCost = 0;
+        serviceAndCost.clear();
+        vehicleType = "";
+        regNumber = "";
+    }
 }
