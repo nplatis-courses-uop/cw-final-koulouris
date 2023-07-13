@@ -60,7 +60,6 @@ public class ServerWindow extends TableView<ClientInfo>{
         totalCost.setMinWidth("Συνολικό ποσό".length()*mult); 
         arrivalTime.setMinWidth("Ώρα άφιξης".length()*mult+50);
 
-
         selectedServices.setStyle("-fx-alignment: CENTER");
         vehicleType.setStyle("-fx-alignment: CENTER");
         regNumber.setStyle("-fx-alignment: CENTER");
@@ -87,6 +86,7 @@ public class ServerWindow extends TableView<ClientInfo>{
                         cancel.setOnAction((e)->{//later
 
                         });
+                        buttonsPane.setAlignment(Pos.CENTER);
                     }
 
                     @Override
