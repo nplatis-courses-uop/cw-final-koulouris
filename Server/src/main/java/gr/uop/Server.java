@@ -16,6 +16,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;   
 
 /**
@@ -33,8 +34,10 @@ public class Server extends Application {
          * RandomAccessFile, fixed length.
          * Η VehicleOrder δέν χρειάζεται.
          */
-        var scene = new Scene(details, 1024, 640);
-        stage.setMinWidth(1024);
+        BorderPane mainPane = new BorderPane();
+        mainPane.setCenter(details);
+        var scene = new Scene(mainPane, 1220, 640);
+        stage.setMinWidth(1220);
         stage.setMinHeight(640);
         stage.setMaxWidth(1920);
         stage.setMaxHeight(1080);

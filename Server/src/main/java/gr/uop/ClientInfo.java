@@ -1,16 +1,20 @@
 package gr.uop;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import javafx.beans.value.ObservableValue;
 
 public class ClientInfo implements Serializable{
     private int totalCost = 0;
     private Map<Service, Integer> serviceAndCost;
     private String vehicleType;
     private String regNumber;
+    private String arrivalTime, departureTime;
 
     public ClientInfo(String vehicleType, String regNumber, ArrayList<Service> selectedServices){
         this.regNumber = regNumber;
@@ -22,6 +26,23 @@ public class ClientInfo implements Serializable{
             serviceAndCost.put(s, cost);
             totalCost += cost;
         }
+    }
+
+    public void setArrivvalTime(LocalDateTime now){
+        arrivalTime = now.getDayOfMonth()+"/"+now.getMonthValue()+"/"+now.getYear()+", ";
+        arrivalTime += now.getHour()+":"+now.getMinute();
+    }
+
+    public String getArrivalTime(){
+        return arrivalTime;
+    }
+    public void setDepartureTime(LocalDateTime now){
+        departureTime = now.getDayOfMonth()+"/"+now.getMonthValue()+"/"+now.getYear()+", ";
+        departureTime += now.getHour()+":"+now.getMinute();
+    }
+
+    public String getDepartureTime(){
+        return departureTime;
     }
 
     public int getTotalCost(){

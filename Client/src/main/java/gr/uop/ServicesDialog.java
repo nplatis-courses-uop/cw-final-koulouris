@@ -298,6 +298,7 @@ public class ServicesDialog extends Dialog<String>{
                 c.setDisable(false);
             }
         }
+        totalCost = 0;
+        totCost.setText("Συνολικό ποσό: "+totalCost+"$");
     }
-    
 }

@@ -4,80 +4,167 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Optional;
+import java.util.Set;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import javafx.util.Callback;
 
-public class ServerWindow extends GridPane{
+public class ServerWindow extends TableView<ClientInfo>{
     private int row = 0;
+    private TableColumn<ClientInfo, String> vehicleType, regNumber, totalCost, arrivalTime;
+    private TableColumn<ClientInfo, HBox> pay;
+    private TableColumn<ClientInfo, TextArea> selectedServices;
+    private ObservableList<ClientInfo> data = FXCollections.observableArrayList();
 
     public ServerWindow(){
         super();
         setStyle("-fx-font-size: 18px;");
         //Πρώτη στήλη: κουμπιά "Πληρωμή", δεύτερη στήλη: τύπος οχήματος, τρίτη στήλη: αριθμός κυκλοφορίας, 4η στήλη: επιλεγμένες υπηρεσίες, 5η στήλη: συνολικό κόστος, 6η στήλη: ώρα άφιξης
-        //τα ίδια ακριβώς θα εγγράφονται στο βιβλίο εσόδων
-        add(new Label("Τύπος οχήματος   "), 1, 0);
-        add(new Label("Αριθμός κυκλοφορίας   "), 2, 0);
-        add(new Label("Επιλεγμένες υπηρεσίες   "), 3, 0);
-        add(new Label("Συνολικό ποσό   "), 4, 0);
-        add(new Label("Ώρα άφιξης   "), 5, 0);
+        pay = new TableColumn<>("");
+        pay.setMinWidth(220);
+        vehicleType = new TableColumn<>("Τύπος οχήματος");
+
+        regNumber = new TableColumn<>("Αριθμός κυκλοφορίας");
+        selectedServices = new TableColumn<>("Επιλεγμένες υπηρεσίες");      
+        totalCost = new TableColumn<>("Συνολικό ποσό");       
+        arrivalTime = new TableColumn<>("Ώρα άφιξης");
+
+        int mult = 12;
+        vehicleType.setMinWidth("Τύπος οχήματος".length()*mult);
+        regNumber.setMinWidth("Αριθμός κυκλοφορίας".length()*mult);
+        selectedServices.setMinWidth("Επιλεγμένες υπηρεσίες".length()*mult); 
+        totalCost.setMinWidth("Συνολικό ποσό".length()*mult); 
+        arrivalTime.setMinWidth("Ώρα άφιξης".length()*mult+50);
+
+
+        selectedServices.setStyle("-fx-alignment: CENTER");
+        vehicleType.setStyle("-fx-alignment: CENTER");
+        regNumber.setStyle("-fx-alignment: CENTER");
+        totalCost.setStyle("-fx-alignment: CENTER");
+        arrivalTime.setStyle("-fx-alignment: CENTER");
+        setFixedCellSize(70);
+        setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);//columns will share all of TableView's width
+        
+        
+        Callback<TableColumn<ClientInfo, HBox>, TableCell<ClientInfo, HBox>> payCellFactory = new Callback<TableColumn<ClientInfo,HBox>,TableCell<ClientInfo,HBox>>() {
+
+            @Override
+            public TableCell<ClientInfo, HBox> call(TableColumn<ClientInfo, HBox> param) {
+                // TODO Auto-generated method stub
+                final TableCell<ClientInfo, HBox> cell = new TableCell<ClientInfo, HBox>(){
+                    private final Button payment = new Button("Πληρωμή");
+                    private final Button cancel = new Button("Ακύρωση");
+                    private final HBox buttonsPane = new HBox(5, payment, cancel);
+
+                    {
+                        payment.setOnAction((e)->{//later
+
+                        });
+                        cancel.setOnAction((e)->{//later
+
+                        });
+                    }
+
+                    @Override
+                    public void updateItem(HBox item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(buttonsPane);
+                        }
+                    }
+                };
+                return cell;
+            }
+            
+        };
+        pay.setCellFactory(payCellFactory);
+        vehicleType.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ClientInfo,String>,ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<ClientInfo, String> param) {
+                // TODO Auto-generated method stub
+                return new ReadOnlyObjectWrapper<String>(param.getValue().getVehicleType());
+            }
+            
+        });
+        regNumber.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ClientInfo,String>,ObservableValue<String>>() {
+
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<ClientInfo, String> param) {
+                // TODO Auto-generated method stub
+                return new ReadOnlyObjectWrapper<String>(param.getValue().getregNumber());
+            }
+            
+        });
+        selectedServices.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ClientInfo,TextArea>, ObservableValue<TextArea>>() {
+            @Override
+            public ObservableValue<TextArea> call(CellDataFeatures<ClientInfo, TextArea> param) {
+                Set<Service> serviceSet = param.getValue().getSelectedServices();
+                String ret = "";
+                Iterator<Service> it = serviceSet.iterator();
+                while(it.hasNext()){
+                    Service s = it.next();
+                    ret+=s.getName();
+                    if(it.hasNext()){
+                        ret+=", ";
+                    }
+                }
+                TextArea wrapAndNotEditable = new TextArea(ret);
+                wrapAndNotEditable.setWrapText(true);
+                wrapAndNotEditable.setEditable(false);
+                wrapAndNotEditable.setMaxHeight(50);
+                return new ReadOnlyObjectWrapper<TextArea>(wrapAndNotEditable);
+            }
+        });
+        totalCost.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ClientInfo,String>,ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<ClientInfo, String> param) {
+                return new ReadOnlyObjectWrapper<String>(Integer.toString(param.getValue().getTotalCost()));
+            }
+        });
+        arrivalTime.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ClientInfo,String>,ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<ClientInfo, String> param) {
+                return new ReadOnlyObjectWrapper<String>(param.getValue().getArrivalTime());
+            }
+        });
+        getColumns().add(pay);
+        getColumns().add(vehicleType);
+        getColumns().add(regNumber);
+        getColumns().add(selectedServices);
+        getColumns().add(totalCost);
+        getColumns().add(arrivalTime);
+        
+        setItems(data);
     }
 
     public void add(ClientInfo input, LocalDateTime now){
-        row += 1;
-        Button but = new Button("Πληρωμή ");
-        add(but,0,row);
-        but.setOnAction((e) -> {
-            Alert alert = new Alert(AlertType.CONFIRMATION);
-            alert.setTitle("Payment Confirmation");
-            alert.setContentText("Do you want to proceed with Payments?");
-            //alert.setHeaderText(null);
-            alert.initModality(Modality.WINDOW_MODAL);
-            alert.getButtonTypes().add(ButtonType.CLOSE);
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {//enter Money book
-                MoneyBook mb = new MoneyBook();
-                mb.inputServiceInfo(input, now);
-                System.out.println("OK");
-            }
-            else if (result.get() == ButtonType.CANCEL) {//cancel order
-                input.deletClientInfo(input);
-                //row-=1;
-                System.out.println("Cancel Order");
-            }
-            else if (result.get() == ButtonType.CLOSE) {
-                System.out.println("Close Menu");
-            }
-            System.out.println("Window Closed");
-
-        });
-        
-        add(new Label(input.getVehicleType()), 1, row);
-        add(new Label(input.getregNumber()), 2, row);
-        String selectedServices  = "";
-        Iterator<Service> it = input.getSelectedServices().iterator();
-        while(it.hasNext()){
-            Service s = it.next();
-            selectedServices += s.getName();
-            if(it.hasNext()){selectedServices+=", ";}
-        }
-        add(new Label(selectedServices), 3, row);
-        add(new Label(Integer.toString(input.getTotalCost())), 4, row);
-        String n;
-        if(now.getMinute()<10){
-            n="0"+now.getMinute();
-        }
-        else{
-            n=""+now.getMinute();
-        }
-        
-        add(new Label(now.getHour()+":"+n), 5, row); 
+        input.setArrivvalTime(now);
+        data.add(input);
     }
-    
 }
