@@ -8,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class MoneyBook {
@@ -27,6 +29,26 @@ public class MoneyBook {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }   
+    }
+
+
+    public static void update(ClientInfo clientInf, LocalDateTime departureTime){
+        ArrayList<ClientInfo> all = loadAllEntries();
+        int index = all.indexOf((ClientInfo)clientInf);
+        ClientInfo c = all.get(index);
+        c.setDepartureTime(departureTime);
+        all.set(index, c);
+        try (FileOutputStream fos = new FileOutputStream(BOOK_NAME, false)) {
+            ObjectOutputStream toFile = new ObjectOutputStream(fos);
+            for(ClientInfo Ci: all){
+                toFile.writeObject((ClientInfo)Ci);
+            }
+            toFile.flush();//make sure all data is written in the file
+            toFile.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     /**

@@ -15,7 +15,7 @@ public class ClientInfo implements Serializable{
     private String vehicleType;
     private String regNumber;
     private String arrivalTime, departureTime;
-    public final static String DATE_FORMAT_PATTERN = "HH:MM, dd MM yyyy";
+    public final static String DATE_FORMAT_PATTERN = "HH:MM, dd-MM-yyyy";
 
     public ClientInfo(String vehicleType, String regNumber, ArrayList<Service> selectedServices){
         this.regNumber = regNumber;
@@ -79,5 +79,17 @@ public class ClientInfo implements Serializable{
         serviceAndCost.clear();
         vehicleType = "";
         regNumber = "";
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(obj == null){return false;}
+        if(obj==this){return true;}
+        if(obj instanceof ClientInfo == false){return false;}
+        ClientInfo c = (ClientInfo)obj;
+        if(this.regNumber.equalsIgnoreCase(c.regNumber) && this.arrivalTime.equalsIgnoreCase(c.arrivalTime)){//regNumber is unique, same client can't arrive twice at the same time
+            return true;
+        }
+        return false;
     }
 }

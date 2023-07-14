@@ -85,7 +85,9 @@ public class ServerWindow extends TableView<ClientInfo>{
                             confirmPayment.setContentText(InfoText);
                             Optional<ButtonType> response = confirmPayment.showAndWait();
                             if(response.get() == ButtonType.OK){
-                                ci.setDepartureTime(LocalDateTime.now());
+                                LocalDateTime now = LocalDateTime.now();
+                                MoneyBook.update(ci, now);
+                                ci.setDepartureTime(now);
                                 data.remove(ci);
                             }
                         });
