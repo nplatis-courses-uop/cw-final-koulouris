@@ -1,21 +1,19 @@
 package gr.uop;
 
-import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.ArrayList;
+import java.util.Locale;
 
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;   
 
@@ -28,12 +26,12 @@ public class Server extends Application {
     @Override
     public void start(Stage stage) throws ClassNotFoundException {
 
-        /*
-         * Πρίν κάνει οτιδήποτε, να κοιτά το αρχείο με τα έσοδα και να γεμίζει ένα πίνακα από MoneyBookEntries
-         * Αντί για κλάση MoneyBook, κλάση MoneyBookEntry αφού κάθε φορά θα χειρίζεται μία εγγραφή, το "βιβλίο" είναι το ίδιο το αρχείο.
-         * RandomAccessFile, fixed length.
-         * Η VehicleOrder δέν χρειάζεται.
-         */
+        ArrayList<ClientInfo> saved = MoneyBook.loadAllEntries();
+        for(ClientInfo c: saved){
+            if(c.getDepartureTime().equalsIgnoreCase("")){
+                details.add(c, LocalDateTime.parse(c.getArrivalTime(), DateTimeFormatter.ofPattern(ClientInfo.DATE_FORMAT_PATTERN, Locale.ROOT)));
+            }
+        }
         BorderPane mainPane = new BorderPane();
         mainPane.setCenter(details);
         var scene = new Scene(mainPane, 1220, 640);
@@ -44,9 +42,9 @@ public class Server extends Application {
         stage.setTitle("Πρόγραμμα ταμείου");
         stage.setScene(scene);
         stage.show();
+        stage.setOnCloseRequest((e)->System.exit(0));
 
         startServer();
-
     }
 
     private void startServer() {
@@ -75,6 +73,7 @@ public class Server extends Application {
                 // Process the received data and update the GridPane
                 Platform.runLater(() -> {
                     details.add(clientInfo, LocalDateTime.now());
+                    MoneyBook.inputServiceInfo(clientInfo);
                 });
 
                 // Close the client socket

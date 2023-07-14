@@ -9,6 +9,9 @@
 #text files
 *.txt
 
+#data file
+*.data
+
 # BlueJ files
 *.ctxt
 

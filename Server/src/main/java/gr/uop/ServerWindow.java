@@ -1,16 +1,11 @@
 package gr.uop;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Set;
 
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,23 +13,17 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import javafx.util.Callback;
 
 public class ServerWindow extends TableView<ClientInfo>{
-    private int row = 0;
     private TableColumn<ClientInfo, String> vehicleType, regNumber, totalCost, arrivalTime;
     private TableColumn<ClientInfo, HBox> pay;
     private TableColumn<ClientInfo, TextArea> selectedServices;
@@ -80,10 +69,27 @@ public class ServerWindow extends TableView<ClientInfo>{
                     private final HBox buttonsPane = new HBox(5, payment, cancel);
 
                     {
-                        payment.setOnAction((e)->{//later
-
+                        payment.setOnAction((e)->{//open dialog with the selected row's content, user must confirm payment, then add departure time, remove from main window.
+                            
+                            TableRow<ClientInfo> row = this.getTableRow();
+                            Alert confirmPayment = new Alert(AlertType.CONFIRMATION);
+                            confirmPayment.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
+                            confirmPayment.setHeaderText("Ολοκλήρωση πληρωμής;");
+                            ClientInfo ci = row.getItem();
+                            String InfoText = ci.getVehicleType()+", Αριθμός κυκλοφορίας: "+ci.getregNumber()+"\nΕπιλεγμένες υπηρεσίες:\n";
+                            Set<Service> services = ci.getSelectedServices();
+                            for(Service s: services){
+                                InfoText+=s.getName()+"\n";
+                            }
+                            InfoText+="Συνολικό ποσό: "+ci.getTotalCost()+"$, "+"Ημερομηνία άφιξης: "+ci.getArrivalTime();
+                            confirmPayment.setContentText(InfoText);
+                            Optional<ButtonType> response = confirmPayment.showAndWait();
+                            if(response.get() == ButtonType.OK){
+                                ci.setDepartureTime(LocalDateTime.now());
+                                data.remove(ci);
+                            }
                         });
-                        cancel.setOnAction((e)->{//later
+                        cancel.setOnAction((e)->{//remove entry from book and from window, after confirmation
 
                         });
                         buttonsPane.setAlignment(Pos.CENTER);
@@ -163,6 +169,11 @@ public class ServerWindow extends TableView<ClientInfo>{
         setItems(data);
     }
 
+    /**
+     * Adds ClientInfo to main window, sets its arrival time
+     * @param input  the ClientInfo to add
+     * @param now  the arrival time of input
+     */
     public void add(ClientInfo input, LocalDateTime now){
         input.setArrivvalTime(now);
         data.add(input);
