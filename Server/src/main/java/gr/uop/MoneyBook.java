@@ -1,7 +1,9 @@
 package gr.uop;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,15 +19,9 @@ public class MoneyBook {
      * @param x the ClientInfo to append
      */
     public static void inputServiceInfo(ClientInfo x){
-        try (FileOutputStream fos = new FileOutputStream(BOOK_NAME, true)) {
-            ObjectOutputStream toFile = new ObjectOutputStream(fos);
-            toFile.writeObject((ClientInfo)x);
-            toFile.flush();//make sure all data is written in the file
-            toFile.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }   
+        ArrayList<ClientInfo> all = loadAllEntries();
+        all.add(x);
+        writeAll(all);
     }
 
 
@@ -48,17 +44,30 @@ public class MoneyBook {
         boolean opened = false;
 
         try{ 
-            File f = new File(BOOK_NAME);
-            f.createNewFile();
-            fromFile = new ObjectInputStream(new FileInputStream(f));
+            fromFile = new ObjectInputStream(new FileInputStream(BOOK_NAME));
             opened = true;
-            while(true){
+            while(true){//will throw EOFException when it finishes reading from file
                 ClientInfo ci = (ClientInfo)fromFile.readObject();
                 ret.add(ci);
             }
-        } catch (IOException | ClassNotFoundException e) {
-            //file is empty or does not exist
-        } 
+        }catch(EOFException e){
+            //finished reading from file
+        }catch(FileNotFoundException l){//create new empty file
+            File f = new File(BOOK_NAME);
+            try {
+                f.createNewFile();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                System.out.println("Error creating file");
+                e.printStackTrace();
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            System.out.println("Error reading from file");
+            e.printStackTrace();
+        }
         if(opened){
             try {
                 fromFile.close();

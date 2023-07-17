@@ -15,7 +15,7 @@ public class ClientInfo implements Serializable{
     private String vehicleType;
     private String regNumber;
     private String arrivalTime, departureTime;
-    public final static String DATE_FORMAT_PATTERN = "HH:MM, dd-MM-yyyy";
+    public final static String DATE_FORMAT_PATTERN = "HH:mm, dd-MM-yyyy";
 
     public ClientInfo(String vehicleType, String regNumber, ArrayList<Service> selectedServices){
         this.regNumber = regNumber;
@@ -31,14 +31,14 @@ public class ClientInfo implements Serializable{
     }
 
     public void setArrivvalTime(LocalDateTime now){
-        arrivalTime = now.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN, Locale.ROOT));
+        arrivalTime = now.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN));
     }
 
     public String getArrivalTime(){
         return arrivalTime;
     }
     public void setDepartureTime(LocalDateTime now){
-        departureTime = now.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN, Locale.ROOT));
+        departureTime = now.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN));
     }
 
     public String getDepartureTime(){

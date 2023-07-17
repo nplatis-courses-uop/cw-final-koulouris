@@ -24,12 +24,12 @@ public class Server extends Application {
     private ServerWindow details = new ServerWindow();
 
     @Override
-    public void start(Stage stage) throws ClassNotFoundException {
+    public void start(Stage stage) throws ClassNotFoundException{ 
 
         ArrayList<ClientInfo> saved = MoneyBook.loadAllEntries();
         for(ClientInfo c: saved){
             if(c.getDepartureTime().isEmpty()){
-                details.add(c, LocalDateTime.parse(c.getArrivalTime(), DateTimeFormatter.ofPattern(ClientInfo.DATE_FORMAT_PATTERN, Locale.ROOT)));
+                details.add(c);
             }
         }
         BorderPane mainPane = new BorderPane();
@@ -42,7 +42,9 @@ public class Server extends Application {
         stage.setTitle("Πρόγραμμα ταμείου");
         stage.setScene(scene);
         stage.show();
-        stage.setOnCloseRequest((e)->System.exit(0));
+        stage.setOnCloseRequest((e)->{//
+            
+        });
 
         startServer();
     }
@@ -69,10 +71,12 @@ public class Server extends Application {
              try {
                 ObjectInputStream inputStream = new ObjectInputStream(clientSocket.getInputStream());
                 ClientInfo clientInfo = (ClientInfo)inputStream.readObject();
+                LocalDateTime now = LocalDateTime.now();
+                clientInfo.setArrivvalTime(now);
 
-                // Process the received data and update the GridPane
+                // Process the received data and update the TableView
                 Platform.runLater(() -> {
-                    details.add(clientInfo, LocalDateTime.now());
+                    details.add(clientInfo);
                     MoneyBook.inputServiceInfo(clientInfo);
                 });
 

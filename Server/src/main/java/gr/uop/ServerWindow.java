@@ -191,10 +191,8 @@ public class ServerWindow extends TableView<ClientInfo>{
     /**
      * Adds ClientInfo to main window, sets its arrival time
      * @param input  the ClientInfo to add
-     * @param now  the arrival time of input
      */
-    public void add(ClientInfo input, LocalDateTime now){
-        input.setArrivvalTime(now);
+    public void add(ClientInfo input){
         data.add(input);
     }
 }
