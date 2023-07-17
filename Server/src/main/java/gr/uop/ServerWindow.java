@@ -69,29 +69,25 @@ public class ServerWindow extends TableView<ClientInfo>{
                     private final HBox buttonsPane = new HBox(5, payment, cancel);
 
                     {
-                        payment.setOnAction((e)->{//open dialog with the selected row's content, user must confirm payment, then add departure time, remove from main window.
-                            
-                            TableRow<ClientInfo> row = this.getTableRow();
-                            Alert confirmPayment = new Alert(AlertType.CONFIRMATION);
-                            confirmPayment.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
-                            confirmPayment.setHeaderText("Ολοκλήρωση πληρωμής;");
-                            ClientInfo ci = row.getItem();
-                            String InfoText = ci.getVehicleType()+", Αριθμός κυκλοφορίας: "+ci.getregNumber()+"\nΕπιλεγμένες υπηρεσίες:\n";
-                            Set<Service> services = ci.getSelectedServices();
-                            for(Service s: services){
-                                InfoText+=s.getName()+"\n";
-                            }
-                            InfoText+="Συνολικό ποσό: "+ci.getTotalCost()+"$, "+"Ημερομηνία άφιξης: "+ci.getArrivalTime();
-                            confirmPayment.setContentText(InfoText);
+                        payment.setOnAction((e)->{//open dialog with the selected row's content, user must confirm payment, then add departure time, remove from main window.    
+                            Alert confirmPayment = confirmAction("Ολοκλήρωση πληρωμής;", getTableRow());
                             Optional<ButtonType> response = confirmPayment.showAndWait();
                             if(response.get() == ButtonType.OK){
                                 LocalDateTime now = LocalDateTime.now();
+                                ClientInfo ci = getTableRow().getItem();
                                 MoneyBook.update(ci, now);
                                 ci.setDepartureTime(now);
                                 data.remove(ci);
                             }
                         });
                         cancel.setOnAction((e)->{//remove entry from book and from window, after confirmation
+                            Alert confirmRemove = confirmAction("Αφαίρεση καταχώρισης;", getTableRow());
+                            Optional<ButtonType> response = confirmRemove.showAndWait();
+                            if(response.get() == ButtonType.OK){
+                                ClientInfo ci = getTableRow().getItem();
+                                MoneyBook.removeEntry(ci);
+                                data.remove((ClientInfo)ci);
+                            }
 
                         });
                         buttonsPane.setAlignment(Pos.CENTER);
@@ -169,6 +165,27 @@ public class ServerWindow extends TableView<ClientInfo>{
         getColumns().add(arrivalTime);
         
         setItems(data);
+    }
+
+   /**
+    * generates a confirm dialog with given parameters
+    * @param headerText the header text of the dialog
+    * @param row the row in the TableView
+    * @return the Alert generated, to handle showAndWait outside.
+    */
+    private Alert confirmAction(String headerText, TableRow<ClientInfo> row){
+        Alert confirmAction = new Alert(AlertType.CONFIRMATION);
+        confirmAction.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
+        confirmAction.setHeaderText(headerText);
+        ClientInfo ci = row.getItem();
+        String InfoText = ci.getVehicleType()+", Αριθμός κυκλοφορίας: "+ci.getregNumber()+"\nΕπιλεγμένες υπηρεσίες:\n";
+        Set<Service> services = ci.getSelectedServices();
+        for(Service s: services){
+            InfoText+=s.getName()+"\n";
+        }
+        InfoText+="Συνολικό ποσό: "+ci.getTotalCost()+"$, "+"Ημερομηνία άφιξης: "+ci.getArrivalTime();
+        confirmAction.setContentText(InfoText);
+        return confirmAction;
     }
 
     /**

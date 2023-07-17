@@ -28,7 +28,7 @@ public class Server extends Application {
 
         ArrayList<ClientInfo> saved = MoneyBook.loadAllEntries();
         for(ClientInfo c: saved){
-            if(c.getDepartureTime().equalsIgnoreCase("")){
+            if(c.getDepartureTime().isEmpty()){
                 details.add(c, LocalDateTime.parse(c.getArrivalTime(), DateTimeFormatter.ofPattern(ClientInfo.DATE_FORMAT_PATTERN, Locale.ROOT)));
             }
         }

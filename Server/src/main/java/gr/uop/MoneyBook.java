@@ -1,14 +1,11 @@
 package gr.uop;
 
-import java.io.BufferedInputStream;
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.RandomAccessFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -38,17 +35,7 @@ public class MoneyBook {
         ClientInfo c = all.get(index);
         c.setDepartureTime(departureTime);
         all.set(index, c);
-        try (FileOutputStream fos = new FileOutputStream(BOOK_NAME, false)) {
-            ObjectOutputStream toFile = new ObjectOutputStream(fos);
-            for(ClientInfo Ci: all){
-                toFile.writeObject((ClientInfo)Ci);
-            }
-            toFile.flush();//make sure all data is written in the file
-            toFile.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        writeAll(all);
     }
 
     /**
@@ -81,5 +68,32 @@ public class MoneyBook {
             }
         }
         return ret;
+    }
+
+    /**
+     * removes given entry from file, if it exists
+     * @param ci the ClientInfo entry to remove
+     */
+    public static void removeEntry(ClientInfo ci) {
+        ArrayList<ClientInfo> all = loadAllEntries();
+        all.remove((ClientInfo)ci);
+        writeAll(all);
+    }
+    /**
+     * Replaces contents of file with given data
+     * @param data the data to be written in the file, replacing anything previously written
+     */
+    private static void writeAll(ArrayList<ClientInfo> data){
+        try (FileOutputStream fos = new FileOutputStream(BOOK_NAME, false)) {
+            ObjectOutputStream toFile = new ObjectOutputStream(fos);
+            for(ClientInfo Ci: data){
+                toFile.writeObject((ClientInfo)Ci);
+            }
+            toFile.flush();//make sure all data is written in the file
+            toFile.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }
