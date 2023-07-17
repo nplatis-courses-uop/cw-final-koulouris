@@ -13,10 +13,12 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.input.KeyCode;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Alert.AlertType;
@@ -57,7 +59,14 @@ public class ServerWindow extends TableView<ClientInfo>{
         setFixedCellSize(70);
         setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);//columns will share all of TableView's width
         
-        
+        getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        getSelectionModel().getTableView().setOnKeyPressed((e)->{
+            if(e.getCode() == KeyCode.ENTER){
+                TableRow<ClientInfo> row = new TableRow<>();
+                row.setItem(getSelectionModel().getSelectedItem());
+                payAction(row);
+            }
+        });
         Callback<TableColumn<ClientInfo, HBox>, TableCell<ClientInfo, HBox>> payCellFactory = new Callback<TableColumn<ClientInfo,HBox>,TableCell<ClientInfo,HBox>>() {
 
             @Override
@@ -70,15 +79,7 @@ public class ServerWindow extends TableView<ClientInfo>{
 
                     {
                         payment.setOnAction((e)->{//open dialog with the selected row's content, user must confirm payment, then add departure time, remove from main window.    
-                            Alert confirmPayment = confirmAction("Ολοκλήρωση πληρωμής;", getTableRow());
-                            Optional<ButtonType> response = confirmPayment.showAndWait();
-                            if(response.get() == ButtonType.OK){
-                                LocalDateTime now = LocalDateTime.now();
-                                ClientInfo ci = getTableRow().getItem();
-                                MoneyBook.update(ci, now);
-                                ci.setDepartureTime(now);
-                                data.remove(ci);
-                            }
+                            payAction(getTableRow());
                         });
                         cancel.setOnAction((e)->{//remove entry from book and from window, after confirmation
                             Alert confirmRemove = confirmAction("Αφαίρεση καταχώρισης;", getTableRow());
@@ -167,7 +168,7 @@ public class ServerWindow extends TableView<ClientInfo>{
         setItems(data);
     }
 
-   /**
+/**
     * generates a confirm dialog with given parameters
     * @param headerText the header text of the dialog
     * @param row the row in the TableView
@@ -189,10 +190,30 @@ public class ServerWindow extends TableView<ClientInfo>{
     }
 
     /**
+     * sets the action for when the user pays (button or Enter)
+     * @param row the selected TableRow
+     */
+    private void payAction(TableRow<ClientInfo> row){
+        Alert confirmPayment = confirmAction("Ολοκλήρωση πληρωμής;", row);
+        Optional<ButtonType> response = confirmPayment.showAndWait();
+        if(response.get() == ButtonType.OK){
+            LocalDateTime now = LocalDateTime.now();
+            ClientInfo ci = row.getItem();
+            MoneyBook.update(ci, now);
+            ci.setDepartureTime(now);
+            data.remove(ci);
+        }
+    }
+
+    /**
      * Adds ClientInfo to main window, sets its arrival time
      * @param input  the ClientInfo to add
      */
     public void add(ClientInfo input){
         data.add(input);
+    }
+
+    public boolean isEmpty() {
+        return data.isEmpty();
     }
 }

@@ -14,6 +14,8 @@ import java.util.Locale;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;   
 
@@ -42,8 +44,15 @@ public class Server extends Application {
         stage.setTitle("Πρόγραμμα ταμείου");
         stage.setScene(scene);
         stage.show();
-        stage.setOnCloseRequest((e)->{//
-            
+        stage.setOnCloseRequest((e)->{//don't close if there's still entries in details
+            if(details.isEmpty() == false){
+                e.consume();
+                Alert cantClose = new Alert(AlertType.ERROR);
+                cantClose.setHeaderText("Το παράθυρο δεν γίνεται να κλείσει.");
+                cantClose.setContentText("Υπάρχουν ακόμα εγγραφές στο πίνακα.");
+                cantClose.initOwner(stage);
+                cantClose.show();
+            }
         });
 
         startServer();
