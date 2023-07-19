@@ -31,6 +31,7 @@ public class ServicesDialog extends Dialog<String>{
     private Label totCost = new Label("Συνολικό ποσό: "+totalCost);
     private String vehicleType;
     private ArrayList<Service> selectedServices;
+    private ArrayList<CheckBox> visited = new ArrayList<>();
 
     public ServicesDialog(Stage stage){
         selectedServices = new ArrayList<>();
@@ -114,84 +115,118 @@ public class ServicesDialog extends Dialog<String>{
         final Set<Map.Entry<Service,CheckBox[]>> actionEntries = list.entrySet();
         for(Map.Entry<Service,CheckBox[]> e: entries){
             CheckBox[] table = e.getValue();
-            for(int i = 0;i < table.length; i++){
-                final int index = i;
-                
+            for(int i = 0; i < table.length; i++){
+                final int index = i;                
                 switch(e.getKey().getName()){//disable checkboxes in the same column
                     case "Πλύσιμο εξωτερικό"://disable: Πλύσιμο εξωτ.+εσωτ., Πλύσιμο εξωτ. σπέσιαλ, Πλύσιμο εξωτ.+εσωτ. σπέσιαλ
-                        for(Map.Entry<Service,CheckBox[]> l: actionEntries){
-                            switch(l.getKey().getName()){
-                                case "Πλύσιμο εξωτ.+εσωτ.":
-                                case "Πλύσιμο εξωτ. σπέσιαλ":
-                                case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
-                                    disableCheckBoxes(l.getValue(), index, table[index].isSelected());
-                                    break;
-                            }
-                        }
+                        table[i].selectedProperty().addListener((obs, oldV, newV)->{
+                            actionEntries.forEach((l)->{
+                                switch(l.getKey().getName()){
+                                    case "Πλύσιμο εξωτ.+εσωτ.":
+                                    case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
+                                        boolean isAnotherSelected = false;
+                                        for(Map.Entry<Service,CheckBox[]> a: actionEntries){
+                                            CheckBox[] tb = a.getValue();
+                                                for(int j = 0; j < tb.length; j++){
+                                                    switch(a.getKey().getName()){
+                                                        case "Πλύσιμο εξωτ. σπέσιαλ":
+                                                        case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
+                                                        case "Πλύσιμο εσωτερικό":
+                                                        case "Πλύσιμο εσωτ. σπέσιαλ":
+                                                            if(tb[index].isSelected()){
+                                                                isAnotherSelected = true;
+                                                            }
+                                                            break;
+                                                    }
+                                                }
+                                                if(isAnotherSelected){break;}
+                                        }
+                                        disableCheckBoxes(l.getValue(), index, table[index].isSelected() || isAnotherSelected);
+                                        break;
+                                    case "Πλύσιμο εξωτ. σπέσιαλ":
+                                        disableCheckBoxes(l.getValue(), index, table[index].isSelected());
+                                        break;
+                                }
+                            });
+                        });
                         break;
                     case "Πλύσιμο εσωτερικό"://disable: Πλύσιμο εξωτ.+εσωτ, Πλύσιμο εσωτ. σπέσιαλ, Πλύσιμο εξωτ.+εσωτ. σπέσιαλ
-                        for(Map.Entry<Service,CheckBox[]> l: actionEntries){
-                            switch(l.getKey().getName()){
-                                case "Πλύσιμο εξωτ.+εσωτ.":
-                                case "Πλύσιμο εσωτ. σπέσιαλ":
-                                case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
-                                    disableCheckBoxes(l.getValue(), index, table[index].isSelected());
-                                    break;
-                            }
-                        }
-                        break;
-                    case "Πλύσιμο εξωτ.+εσωτ."://disable: Πλύσιμο εξωτερικό, Πλύσιμο εσωτερικό, Πλύσιμο εξωτ. σπέσιαλ, Πλύσιμο εσωτ. σπέσιαλ, Πλύσιμο εξωτ.+εσωτ. σπέσιαλ
-                         for(Map.Entry<Service,CheckBox[]> l: actionEntries){
-                            switch(l.getKey().getName()){
-                                case "Πλύσιμο εξωτερικό":
-                                case "Πλύσιμο εσωτερικό":
-                                case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
-                                case "Πλύσιμο εξωτ. σπέσιαλ":
-                                case "Πλύσιμο εσωτ. σπέσιαλ":
-                                    disableCheckBoxes(l.getValue(), index, table[index].isSelected());
-                                    break;
-                            }
-                        }
+                        table[i].selectedProperty().addListener((obs, oldV, newV)->{
+                            actionEntries.forEach((l)->{
+                                switch(l.getKey().getName()){
+                                    case "Πλύσιμο εξωτ.+εσωτ.":
+                                    case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
+
+                                        break;
+                                    case "Πλύσιμο εσωτ. σπέσιαλ":
+                                        disableCheckBoxes(l.getValue(), index, table[index].isSelected());
+                                        break;
+                                }   
+                            });
+                        });
                         break;
                     case "Πλύσιμο εξωτ. σπέσιαλ"://disable: Πλύσιμο εξωτερικό, Πλύσιμο εξωτ.+εσωτ., Πλύσιμο εξωτ.+εσωτ. σπέσιαλ
-                            for(Map.Entry<Service,CheckBox[]> l: actionEntries){
-                            switch(l.getKey().getName()){
-                                case "Πλύσιμο εξωτερικό":
-                                case "Πλύσιμο εξωτ.+εσωτ.":
-                                case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
-                                    disableCheckBoxes(l.getValue(), index, table[index].isSelected());
-                                    break;
-                            }
-                        }
+                        table[i].selectedProperty().addListener((obs, oldV, newV)->{
+                            actionEntries.forEach((l)->{
+                                switch(l.getKey().getName()){
+                                    case "Πλύσιμο εξωτ.+εσωτ.":
+                                    case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
+
+                                        break;
+                                    case "Πλύσιμο εξωτερικό":
+                                        disableCheckBoxes(l.getValue(), index, table[index].isSelected());
+                                        break;
+                                }
+                            });
+                        });
                         break;
                     case "Πλύσιμο εσωτ. σπέσιαλ"://disable: Πλύσιμο εξωτ.+εσωτ., Πλύσιμο εσωτερικό, Πλύσιμο εξωτ.+εσωτ. σπέσιαλ
-                            for(Map.Entry<Service,CheckBox[]> l: actionEntries){
-                            switch(l.getKey().getName()){
-                                case "Πλύσιμο εξωτ.+εσωτ.":
-                                case "Πλύσιμο εσωτερικό":
-                                case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
-                                    disableCheckBoxes(l.getValue(), index, table[index].isSelected());
-                                    break;
-                            }
-                        }
+                        table[i].selectedProperty().addListener((obs, oldV, newV)->{
+                            actionEntries.forEach((l)->{
+                                switch(l.getKey().getName()){
+                                    case "Πλύσιμο εξωτ.+εσωτ.":
+                                    case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
+
+                                        break;
+                                    case "Πλύσιμο εσωτερικό":
+                                        disableCheckBoxes(l.getValue(), index, table[index].isSelected());
+                                        break;
+                                }
+                            });
+                        });
                         break;
-                    
+                    case "Πλύσιμο εξωτ.+εσωτ."://disable: Πλύσιμο εξωτερικό, Πλύσιμο εσωτερικό, Πλύσιμο εξωτ. σπέσιαλ, Πλύσιμο εσωτ. σπέσιαλ, Πλύσιμο εξωτ.+εσωτ. σπέσιαλ
+                        table[i].selectedProperty().addListener((obs, oldV, newV)->{
+                            actionEntries.forEach((l)->{
+                                switch(l.getKey().getName()){
+                                    case "Πλύσιμο εξωτερικό":
+                                    case "Πλύσιμο εσωτερικό":
+                                    case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
+                                    case "Πλύσιμο εξωτ. σπέσιαλ":
+                                    case "Πλύσιμο εσωτ. σπέσιαλ":
+                                        disableCheckBoxes(l.getValue(), index, table[index].isSelected());
+                                        break;
+                                }
+                            });
+                        });
+                        break;
                     case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ"://disable: Πλύσιμο εξωτερικό, Πλύσιμο εσωτερικό, Πλύσιμο εξωτ. σπέσιαλ, Πλύσιμο εσωτ. σπέσιαλ, Πλύσιμο εξωτ.+εσωτ.
-                            for(Map.Entry<Service,CheckBox[]> l: actionEntries){
-                            switch(l.getKey().getName()){
-                                case "Πλύσιμο εξωτερικό":
-                                case "Πλύσιμο εσωτερικό":
-                                case "Πλύσιμο εξωτ.+εσωτ.":
-                                case "Πλύσιμο εσωτ. σπέσιαλ":
-                                case "Πλύσιμο εξωτ. σπέσιαλ":
-                                    disableCheckBoxes(l.getValue(), index, table[index].isSelected());
-                                    break;
-                            }
-                        }
+                        table[i].selectedProperty().addListener((obs, oldV, newV)->{
+                            actionEntries.forEach((l)->{
+                                switch(l.getKey().getName()){
+                                    case "Πλύσιμο εξωτερικό":
+                                    case "Πλύσιμο εσωτερικό":
+                                    case "Πλύσιμο εξωτ.+εσωτ.":
+                                    case "Πλύσιμο εσωτ. σπέσιαλ":
+                                    case "Πλύσιμο εξωτ. σπέσιαλ":
+                                        disableCheckBoxes(l.getValue(), index, table[index].isSelected());
+                                        break;
+                                }
+                            });
+                        });
                         break;                             
                 }
-                
-                
+                    
                 table[i].selectedProperty().addListener((obs, oldV, newV)->{
                     if(newV == true){//disable checkboxes from columns != index
                         actionEntries.forEach((l)->{
