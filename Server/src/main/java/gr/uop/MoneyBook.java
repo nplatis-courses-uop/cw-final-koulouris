@@ -11,7 +11,7 @@ import java.io.ObjectOutputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class MoneyBook {
+public interface MoneyBook {
     final static String BOOK_NAME = "Book.data";
 
     /**

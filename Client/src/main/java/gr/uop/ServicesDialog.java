@@ -133,7 +133,7 @@ public class ServicesDialog extends Dialog<String>{
                                                         case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
                                                         case "Πλύσιμο εσωτερικό":
                                                         case "Πλύσιμο εσωτ. σπέσιαλ":
-                                                            if(tb[index].isSelected()){
+                                                            if(index< tb.length && tb[index].isSelected()){
                                                                 isAnotherSelected = true;
                                                             }
                                                             break;
@@ -156,7 +156,24 @@ public class ServicesDialog extends Dialog<String>{
                                 switch(l.getKey().getName()){
                                     case "Πλύσιμο εξωτ.+εσωτ.":
                                     case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
-
+                                        boolean isAnotherSelected = false;
+                                        for(Map.Entry<Service,CheckBox[]> a: actionEntries){
+                                            CheckBox[] tb = a.getValue();
+                                                for(int j = 0; j < tb.length; j++){
+                                                    switch(a.getKey().getName()){
+                                                        case "Πλύσιμο εξωτ. σπέσιαλ":
+                                                        case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
+                                                        case "Πλύσιμο εξωτερικό":
+                                                        case "Πλύσιμο εσωτ. σπέσιαλ":
+                                                            if(index< tb.length && tb[index].isSelected()){
+                                                                isAnotherSelected = true;
+                                                            }
+                                                            break;
+                                                    }
+                                                }
+                                                if(isAnotherSelected){break;}
+                                        }
+                                        disableCheckBoxes(l.getValue(), index, table[index].isSelected() || isAnotherSelected);
                                         break;
                                     case "Πλύσιμο εσωτ. σπέσιαλ":
                                         disableCheckBoxes(l.getValue(), index, table[index].isSelected());
@@ -171,7 +188,24 @@ public class ServicesDialog extends Dialog<String>{
                                 switch(l.getKey().getName()){
                                     case "Πλύσιμο εξωτ.+εσωτ.":
                                     case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
-
+                                        boolean isAnotherSelected = false;
+                                        for(Map.Entry<Service,CheckBox[]> a: actionEntries){
+                                            CheckBox[] tb = a.getValue();
+                                                for(int j = 0; j < tb.length; j++){
+                                                    switch(a.getKey().getName()){
+                                                        case "Πλύσιμο εσωτερικό":
+                                                        case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
+                                                        case "Πλύσιμο εξωτερικό":
+                                                        case "Πλύσιμο εσωτ. σπέσιαλ":
+                                                            if(index< tb.length && tb[index].isSelected()){
+                                                                isAnotherSelected = true;
+                                                            }
+                                                            break;
+                                                    }
+                                                }
+                                                if(isAnotherSelected){break;}
+                                        }
+                                        disableCheckBoxes(l.getValue(), index, table[index].isSelected() || isAnotherSelected);
                                         break;
                                     case "Πλύσιμο εξωτερικό":
                                         disableCheckBoxes(l.getValue(), index, table[index].isSelected());
@@ -186,7 +220,24 @@ public class ServicesDialog extends Dialog<String>{
                                 switch(l.getKey().getName()){
                                     case "Πλύσιμο εξωτ.+εσωτ.":
                                     case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
-
+                                        boolean isAnotherSelected = false;
+                                        for(Map.Entry<Service,CheckBox[]> a: actionEntries){
+                                            CheckBox[] tb = a.getValue();
+                                                for(int j = 0; j < tb.length; j++){
+                                                    switch(a.getKey().getName()){
+                                                        case "Πλύσιμο εξωτ. σπέσιαλ":
+                                                        case "Πλύσιμο εξωτ.+εσωτ. σπέσιαλ":
+                                                        case "Πλύσιμο εξωτερικό":
+                                                        case "Πλύσιμο εσωτερικό":
+                                                            if(index< tb.length && tb[index].isSelected()){
+                                                                isAnotherSelected = true;
+                                                            }
+                                                            break;
+                                                    }
+                                                }
+                                                if(isAnotherSelected){break;}
+                                        }
+                                        disableCheckBoxes(l.getValue(), index, table[index].isSelected() || isAnotherSelected);
                                         break;
                                     case "Πλύσιμο εσωτερικό":
                                         disableCheckBoxes(l.getValue(), index, table[index].isSelected());
