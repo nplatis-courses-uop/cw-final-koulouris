@@ -31,8 +31,11 @@ public class ServicesDialog extends Dialog<String>{
     private Label totCost = new Label("Συνολικό ποσό: "+totalCost);
     private String vehicleType;
     private ArrayList<Service> selectedServices;
-    private ArrayList<CheckBox> visited = new ArrayList<>();
 
+    /**
+     * Creates a new ServicesDialog, with all functionality except showing it
+     * @param stage the stage to display the dialog
+     */
     public ServicesDialog(Stage stage){
         selectedServices = new ArrayList<>();
         list = new TreeMap<>();
@@ -110,6 +113,9 @@ public class ServicesDialog extends Dialog<String>{
         });
     }
 
+    /**
+     * sets the actions of each CheckBox in the Dialog, applying restrictions
+     */
     private void setCheckBoxesActions() {
         Set<Map.Entry<Service,CheckBox[]>> entries = list.entrySet();
         final Set<Map.Entry<Service,CheckBox[]>> actionEntries = list.entrySet();
@@ -346,12 +352,20 @@ public class ServicesDialog extends Dialog<String>{
         }
     }
 
+    /**
+     * Disables checkboxes from a given array, on a given index
+     * @param value the array of checkboxes
+     * @param index the index to disable
+     * @param b true to disable, false to enable
+     */
     private void disableCheckBoxes(CheckBox[] value, int index, boolean b) {
         if(index < value.length){
             value[index].setDisable(b);
         }
     }
-
+    /**
+     * Sets the cost of each service for every type of vehicle
+     */
     private void setServicesCosts() {
         Set<Map.Entry<Service,CheckBox[]>> entries = list.entrySet();
         for(Map.Entry<Service,CheckBox[]> e: entries){
@@ -396,9 +410,17 @@ public class ServicesDialog extends Dialog<String>{
         }
     }
 
+    /**
+     * Returns the type of vehicle selected
+     * @return the type of vehicle selected
+     */
     public String getVehicleType() {
         return vehicleType;
     }
+    /**
+     * Returns the list of selected services
+     * @return the list of selected services
+     */
     public ArrayList<Service> getSelectedServices(){
         return selectedServices;
     }

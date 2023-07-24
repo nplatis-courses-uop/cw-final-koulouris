@@ -31,6 +31,9 @@ public class ServerWindow extends TableView<ClientInfo>{
     private TableColumn<ClientInfo, TextArea> selectedServices;
     private ObservableList<ClientInfo> data = FXCollections.observableArrayList();
 
+    /**
+     * Creates a new ServerWindow, also setting to get the data from ObservableList<ClientInfo> data
+     */
     public ServerWindow(){
         super();
         setStyle("-fx-font-size: 18px;");
@@ -168,7 +171,7 @@ public class ServerWindow extends TableView<ClientInfo>{
         setItems(data);
     }
 
-/**
+    /**
     * generates a confirm dialog with given parameters
     * @param headerText the header text of the dialog
     * @param row the row in the TableView

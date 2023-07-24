@@ -1,16 +1,11 @@
 package gr.uop;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
-import java.util.Locale;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -52,12 +47,16 @@ public class Server extends Application {
                 cantClose.setContentText("Υπάρχουν ακόμα εγγραφές στο πίνακα.");
                 cantClose.initOwner(stage);
                 cantClose.show();
-            }
+            }else{System.exit(0);}
         });
 
         startServer();
     }
 
+    /**
+     * Starts the server, 
+     * creates a new thread for each client connection
+     */
     private void startServer() {
         new Thread(()->{
             ServerSocket serverSocket;
@@ -74,7 +73,10 @@ public class Server extends Application {
 
         }).start();
     }
-
+    /**
+     * Handles a client connection, reading the ClientInfo object
+     * @param clientSocket the socket to handle
+     */
     private void handleClientConnection(Socket clientSocket) {
         new Thread(() -> {
              try {

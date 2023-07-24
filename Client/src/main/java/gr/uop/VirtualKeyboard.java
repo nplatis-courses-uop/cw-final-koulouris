@@ -22,6 +22,10 @@ public class VirtualKeyboard extends GridPane{
     private Button space = new Button(" ");
     private TextField userInput;
 
+    /**
+     * Creates a new VirtualKeyboard
+     * @param dest the TextField to write to
+     */
     public VirtualKeyboard(TextField dest){
         super();
         userInput = dest;
@@ -36,10 +40,17 @@ public class VirtualKeyboard extends GridPane{
         enter.setDisable(true);
     }
 
+    /**
+     * Adds an action to the enter button
+     * @param e the action to add
+     */
     public void addEnterAction(EventHandler<ActionEvent> e){
         enter.setOnAction(e);
     }
 
+    /**
+     * Adds actions to all buttons except Enter
+     */
     private void addActions() {
         for(Button b: letters){
             b.setOnAction((e)->{
@@ -73,6 +84,9 @@ public class VirtualKeyboard extends GridPane{
         });
     }
 
+    /**
+     * Adds all buttons to the pane
+     */
     private void addKeysToPane() {
         int i = 0;
         while(i<10){
